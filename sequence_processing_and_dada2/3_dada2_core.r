@@ -97,14 +97,15 @@ write.csv(table(nchar(getSequences(seqtab.nochim))), file.path(outDir, "asv_lens
 
 ###
 #Track reads through the pipeline
-getN <- function(x) sum(getUniques(x))
-track <- cbind(sapply(itsFs, getN), sapply(itsRs, getN), sapply(itsFs.len, getN), sapply(itsRs.len, getN), sapply(mergers, getN),
-    rowSums(seqtab.nochim))
+
+#getN <- function(x) sum(getUniques(x))
+#track <- cbind(sapply(itsFs, getN), sapply(itsRs, getN), sapply(itsFs.len, getN), sapply(itsRs.len, getN), sapply(mergers, getN),
+#    rowSums(seqtab.nochim))
 # If processing a single sample, remove the sapply calls: e.g. replace
 # sapply(dadaFs, getN) with getN(dadaFs)
-colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR", "denoisedF", "denoisedR", "merged", "nonchim")
-rownames(track) <- sample.names
-write.csv(track, file.path(checksDir, "pre_primerTrim_primer_check.csv"))
+#colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR", "denoisedF", "denoisedR", "merged", "nonchim")
+#rownames(track) <- sample.names
+#write.csv(track, file.path(checksDir, "pre_primerTrim_primer_check.csv"))
 
 ################################
 #Create workable objects (on hd)
