@@ -33,7 +33,7 @@ Also clone this git repo to your local directory
 ```
 mkdir repo
 cd repo
-clone https://github.com/ewmorr/fungi_ITS2_dada2_protocol_07162024
+git clone https://github.com/ewmorr/fungi_ITS2_dada2_protocol_07162024
 ```
 
 ## Now we are ready to process sequences. 
