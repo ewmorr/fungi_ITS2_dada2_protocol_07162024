@@ -102,7 +102,7 @@ track <- cbind(sapply(itsFs, getN), sapply(itsRs, getN), sapply(itsFs.len, getN)
     rowSums(seqtab.nochim))
 # If processing a single sample, remove the sapply calls: e.g. replace
 # sapply(dadaFs, getN) with getN(dadaFs)
-colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR" "denoisedF", "denoisedR", "merged", "nonchim")
+colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR", "denoisedF", "denoisedR", "merged", "nonchim")
 rownames(track) <- sample.names
 write.csv(track, file.path(checksDir, "pre_primerTrim_primer_check.csv"))
 
