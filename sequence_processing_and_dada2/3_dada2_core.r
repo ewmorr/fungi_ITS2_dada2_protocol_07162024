@@ -43,8 +43,8 @@ itsRs.len <- sort(list.files(path.len, pattern = "_R2_001.fastq.gz", full.names 
 
 #Vis read quality of its-extracted reads
 #If running on a large sample set should index the filename object to [1:25] otherwise will be unreadable
-n = 1
-ifelse(length(fnFs.filtN) >= 25, n = 25, n = length(fnFs.filtN) )
+n_seqs = 1
+ifelse(length(fnFs.filtN) >= 25, n_seqs = 25, n_seqs = length(fnFs.filtN) )
 
 pdf(file.path(checksDir, "read_quality_post_qual_filter.pdf"))
 print(plotQualityProfile(itsFs.len[1:n]))

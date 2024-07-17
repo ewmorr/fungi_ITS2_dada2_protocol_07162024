@@ -48,8 +48,8 @@ get.sample.name <- function(fname) strsplit(basename(fname), "_L00")[[1]][1]
 sample.names <- unname(sapply(fnFs.cut, get.sample.name))
 head(sample.names)
 
-n = 1
-ifelse(length(fnFs.filtN) >= 25, n = 25, n = length(fnFs.filtN) )
+n_seqs = 1
+ifelse(length(fnFs.filtN) >= 25, n_seqs = 25, n_seqs = length(fnFs.filtN) )
 
 #Vis read quality
 pdf(file.path(outDir, "read_quality_pre_dada2_qual_filtering.pdf"))
