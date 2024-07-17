@@ -5,7 +5,8 @@ packageVersion("ShortRead")
 library(Biostrings)
 packageVersion("Biostrings")
 
-seqDir = "/mnt/home/garnas/ewj4/EDRR_patho/cutadapt"
+workDir = args[1]
+seqDir = file.path(workDir, "cutadapt")
 #list.files(seqDir)
 
 fnFs.cut <- sort(list.files(seqDir, pattern = "_R1_001.fastq.gz", full.names = TRUE))
@@ -32,21 +33,24 @@ primerHits <- function(primer, fn) {
 FWD.orients <- allOrients(FWD)
 REV.orients <- allOrients(REV)
 
+outDir = file.path(workDir, "dada2_processing_tables_figs")
 
 x = rbind(FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = fnFs.cut[[1]]),
     FWD.ReverseReads = sapply(FWD.orients, primerHits, fn = fnRs.cut[[1]]),
     REV.ForwardReads = sapply(REV.orients, primerHits, fn = fnFs.cut[[1]]),
     REV.ReverseReads = sapply(REV.orients, primerHits, fn = fnRs.cut[[1]]))
-    write.csv(x, "/mnt/home/garnas/ewj4/EDRR_patho/dada2_processing_tables_figs/post_primerTrim_primer_check.csv")
+    write.csv(x, file.path(outDir, "post_primerTrim_primer_check.csv"))
 
 # Extract sample names, assuming filenames have format:
 get.sample.name <- function(fname) strsplit(basename(fname), "_L00")[[1]][1]
 sample.names <- unname(sapply(fnFs.cut, get.sample.name))
 head(sample.names)
 
+n = 1
+ifelse(length(fnFs.filtN) >= 25, n = 25, n = length(fnFs.filtN) )
 
 #Vis read quality
-pdf("dada2_processing_tables_figs/read_quality_pre_dada2_qual_filtering.pdf")
-print(plotQualityProfile(fnFs.cut[1:25]) )
-print(plotQualityProfile(fnRs.cut[1:25]) )
+pdf(file.path(outDir, "read_quality_pre_dada2_qual_filtering.pdf"))
+print(plotQualityProfile(fnFs.cut[1:n]) )
+print(plotQualityProfile(fnRs.cut[1:n]) )
 dev.off()

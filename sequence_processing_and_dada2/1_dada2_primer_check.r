@@ -64,7 +64,10 @@ write.csv(x, file.path(outDir, "pre_primerTrim_primer_check.csv"))
 #Vis read quality
 #If running on a large sample set should index the filename object to [1:25] otherwise will be unreadable
 
+n = 1
+ifelse(length(fnFs.filtN) >= 25, n = 25, n = length(fnFs.filtN) )
+
 pdf(file.path(outDir, "read_quality_pre_cutadapt.pdf"))
-print(plotQualityProfile(fnFs.filtN[1:25]))
-print(plotQualityProfile(fnRs.filtN[1:25]))
+print(plotQualityProfile(fnFs.filtN[1:n]))
+print(plotQualityProfile(fnRs.filtN[1:n]))
 dev.off()

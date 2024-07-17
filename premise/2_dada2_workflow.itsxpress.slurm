@@ -7,9 +7,10 @@
 
 module purge
 module load anaconda/colsa
-conda activate itsxpress_2x
+conda activate itsxpressenv
 
-cd /mnt/home/garnas/ewj4/EDRR_patho
+workDir=$HOME/$1
+cd $workDir
 
 mkdir itsxpress_out
 outdir=itsxpress_out

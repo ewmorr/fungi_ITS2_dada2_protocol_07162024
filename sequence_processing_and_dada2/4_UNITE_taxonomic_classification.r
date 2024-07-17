@@ -22,7 +22,7 @@ for (i in 1:dim(seqtab.nochim)[2]) {
 }
 row.names(asv_tax) <- sub(">", "", asv_headers)
 write.table(asv_tax, file.path(outDir, "ASVs_taxonomy.tsv"), sep="\t", quote=F, col.names=NA)
-#bottstraps
+#bootstraps
 asv_tax_boot = taxa.w_bootstraps$boot
 row.names(asv_tax_boot) <- sub(">", "", asv_headers)
 write.table(asv_tax_boot, file.path(outDir, "ASVs_taxonomy_bootstrapVals.tsv"), sep="\t", quote=F, col.names=NA)

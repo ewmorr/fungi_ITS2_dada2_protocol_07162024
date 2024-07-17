@@ -13,11 +13,11 @@ workDir=$HOME/$1
 cd $workDir
 
 #Run first R scripts
-Rscript ~/repo/BIL_pathogens/sequence_processing_and_dada2/1_dada2_primer_check.r $workDir
+Rscript ~/repo/fungi_ITS2_dada2_protocol_07162024/sequence_processing_and_dada2/1_dada2_primer_check.r $workDir
 
 mkdir $workDir/cutadapt
 
-#fwd
+#fwd primer
 fwd=AGCCTCCGCTTATTGATATGCTTAART
 #fwd.rc
 fwdRC=AYTTAAGCATATCAATAAGCGGAGGCT
@@ -43,5 +43,5 @@ do(
 )
 done
 
-Rscript ~/repo/BIL_pathogens/sequence_processing_and_dada2/2_post_cutadapt_primer_check.r
+Rscript ~/repo/fungi_ITS2_dada2_protocol_07162024/sequence_processing_and_dada2/2_post_cutadapt_primer_check.r $workDir
 #this is a good place to stop to check primer orientation and quality profiles

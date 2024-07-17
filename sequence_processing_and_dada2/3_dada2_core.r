@@ -12,8 +12,11 @@ packageVersion("Biostrings")
 
 args = commandArgs(trailingOnly=TRUE)
 
-seqDir = args[1]
-outDir = args[2]
+workdir = args[1]
+seqDir = file.path(workdir, "itsxpress_out")
+outDir = file.path(workdir, "dada2_core")
+if(!dir.exists(outDir)) dir.create(outDir)
+checksDir = file.path(workdir, "dada2_processing_tables_figs")
 
 #list.files(seqDir)
 
@@ -21,15 +24,12 @@ outDir = args[2]
 itsFs <- sort(list.files(seqDir, pattern = "_R1_001.fastq.gz", full.names = TRUE))
 itsRs <- sort(list.files(seqDir, pattern = "_R2_001.fastq.gz", full.names = TRUE))
 
-#itsxpress outputs 0 len reads. filter for len
+#itsxpress outputs 0 len reads. filter for len as well as normal filters
 #make files
 path.len <- file.path(seqDir, "gt_10")
 if(!dir.exists(path.len)) dir.create(path.len)
 itsFs.len <- file.path(path.len, basename(itsFs))
 itsRs.len <- file.path(path.len, basename(itsRs))
-
-############
-#MOVE THE QUAL FILTER TO PRE ITSXPRESS
 
 #filter
 out2 <- filterAndTrim(itsFs, itsFs.len, itsRs, itsRs.len, maxN = 0, maxEE = c(2, 2),
@@ -43,9 +43,12 @@ itsRs.len <- sort(list.files(path.len, pattern = "_R2_001.fastq.gz", full.names 
 
 #Vis read quality of its-extracted reads
 #If running on a large sample set should index the filename object to [1:25] otherwise will be unreadable
-pdf(file.path(outDir, "read_quality_post_its_extraction.pdf"))
-print(plotQualityProfile(itsFs.len[1:25]))
-print(plotQualityProfile(itsRs.len[1:25]))
+n = 1
+ifelse(length(fnFs.filtN) >= 25, n = 25, n = length(fnFs.filtN) )
+
+pdf(file.path(checksDir, "read_quality_post_qual_filter.pdf"))
+print(plotQualityProfile(itsFs.len[1:n]))
+print(plotQualityProfile(itsRs.len[1:n]))
 dev.off()
 
 #This is the start of the core algorithm pipeline
@@ -56,7 +59,7 @@ errF <- learnErrors(itsFs.len, multithread = TRUE)
 errR <- learnErrors(itsRs.len, multithread = TRUE)
 
 #Viz
-pdf(file.path(outDir, "error_rate_graphs.pdf"))
+pdf(file.path(checksDir, "error_rate_graphs.pdf"))
 print(plotErrors(errF, nominalQ = TRUE))
 print(plotErrors(errR, nominalQ = TRUE))
 dev.off()
@@ -96,15 +99,13 @@ write.csv(table(nchar(getSequences(seqtab.nochim))), file.path(outDir, "asv_lens
 ###
 #Track reads through the pipeline
 getN <- function(x) sum(getUniques(x))
-
-#####
-#assign taxonomy against unite with RDB
-print("taxonomy assignment with naive bayesian classifier")
-unite.ref <- "/mnt/home/garnas/ewj4/blast_dbs/unite_07252023/sh_general_release_dynamic_singletons_allEuk_25.07.2023.fasta"
-taxa.w_bootstraps <- assignTaxonomy(seqtab.nochim, unite.ref, multithread = TRUE, tryRC = TRUE, outputBootstraps = T)
-taxa.print <- taxa.w_bootstraps$tax  # Removing sequence rownames for display only
-rownames(taxa.print) <- NULL
-
+track <- cbind(sapply(itsFs, getN), sapply(itsRs, getN), sapply(itsFs.len, getN), sapply(itsRs.len, getN), sapply(mergers, getN),
+    rowSums(seqtab.nochim))
+# If processing a single sample, remove the sapply calls: e.g. replace
+# sapply(dadaFs, getN) with getN(dadaFs)
+colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR" "denoisedF", "denoisedR", "merged", "nonchim")
+rownames(track) <- sample.names
+write.csv(track, file.path(checksDir, "pre_primerTrim_primer_check.csv"))
 
 ################################
 #Create workable objects (on hd)
@@ -124,13 +125,4 @@ write(asv_fasta, file.path(outDir, "ASVs.fa"))
 asv_tab <- t(seqtab.nochim)
 row.names(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, file.path(outDir, "ASVs_counts.tsv"), sep="\t", quote=F, col.names=NA)
-
-# tax table:
-asv_tax <- taxa.w_bootstraps$tax
-row.names(asv_tax) <- sub(">", "", asv_headers)
-write.table(asv_tax, file.path(outDir, "ASVs_taxonomy.tsv"), sep="\t", quote=F, col.names=NA)
-#bottstraps
-asv_tax_boot = taxa.w_bootstraps$boot
-row.names(asv_tax_boot) <- sub(">", "", asv_headers)
-write.table(asv_tax_boot, file.path(outDir, "ASVs_taxonomy_bootstrapVals.tsv"), sep="\t", quote=F, col.names=NA)
 
