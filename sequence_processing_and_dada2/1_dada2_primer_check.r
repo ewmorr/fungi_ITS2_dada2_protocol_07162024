@@ -68,6 +68,6 @@ write.csv(x, file.path(outDir, "pre_primerTrim_primer_check.csv"))
 n_seqs = ifelse(length(fnFs.filtN) >= 25, 25, length(fnFs.filtN) )
 
 pdf(file.path(outDir, "read_quality_pre_cutadapt.pdf"))
-print(plotQualityProfile(fnFs.filtN[1:n]))
-print(plotQualityProfile(fnRs.filtN[1:n]))
+print(plotQualityProfile(fnFs.filtN[1:n_seqs]))
+print(plotQualityProfile(fnRs.filtN[1:n_seqs]))
 dev.off()

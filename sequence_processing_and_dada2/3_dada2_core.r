@@ -46,8 +46,8 @@ itsRs.len <- sort(list.files(path.len, pattern = "_R2_001.fastq.gz", full.names 
 n_seqs = ifelse(length(itsFs.len) >= 25, 25, length(itsFs.len) )
 
 pdf(file.path(checksDir, "read_quality_post_qual_filter.pdf"))
-print(plotQualityProfile(itsFs.len[1:n]))
-print(plotQualityProfile(itsRs.len[1:n]))
+print(plotQualityProfile(itsFs.len[1:n_seqs]))
+print(plotQualityProfile(itsRs.len[1:n_seqs]))
 dev.off()
 
 #This is the start of the core algorithm pipeline
