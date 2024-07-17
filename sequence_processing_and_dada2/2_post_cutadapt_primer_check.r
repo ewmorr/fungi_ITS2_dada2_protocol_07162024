@@ -5,6 +5,8 @@ packageVersion("ShortRead")
 library(Biostrings)
 packageVersion("Biostrings")
 
+args = commandArgs(trailingOnly=TRUE)
+
 workDir = args[1]
 seqDir = file.path(workDir, "cutadapt")
 #list.files(seqDir)

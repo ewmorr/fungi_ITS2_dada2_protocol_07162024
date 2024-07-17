@@ -5,6 +5,7 @@ packageVersion("ShortRead")
 library(Biostrings)
 packageVersion("Biostrings")
 
+args = commandArgs(trailingOnly=TRUE)
 
 workDir = args[1]
 
