@@ -70,5 +70,5 @@ sbatch ~/repo/fungi_ITS2_dada2_protocol_07162024/premise/3_dada2_workflow.dada2.
 
 ### Step 4. Taxonopmic classification
 ```
-sbatch ~/repo/fungi_ITS2_dada2_protocol_07162024/premise/4_UNITE_taxonomic_classification.r
+sbatch ~/repo/fungi_ITS2_dada2_protocol_07162024/premise/4_dada2_workflow.taxonomic_id.slurm
 ```
