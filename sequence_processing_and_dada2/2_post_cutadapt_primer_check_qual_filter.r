@@ -73,7 +73,7 @@ fnRs.qual <- sort(list.files(path.qual, pattern = "_R2_001.fastq.gz", full.names
 
 #Vis read quality of quality filtered reads
 #If running on a large sample set should index the filename object to [1:25] otherwise will be unreadable
-n_seqs = ifelse(length(itsFs.qual) >= 25, 25, length(itsFs.qual) )
+n_seqs = ifelse(length(fnRs.qual) >= 25, 25, length(fnRs.qual) )
 
 pdf(file.path(checksDir, "read_quality_post_qual_filter.pdf"))
 print(plotQualityProfile(fnFs.qual[1:n_seqs]))

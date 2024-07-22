@@ -15,6 +15,7 @@ conda deactivate
 conda create --name r-dada2_new --clone template
 conda activate r-dada2_new
 conda install bioconda::bioconductor-dada2
+conda install r-dplyr
 ```
 
 Then open R and check that dada2 is installed and loads. Open an R interpreter by typing a capital R on the command line
