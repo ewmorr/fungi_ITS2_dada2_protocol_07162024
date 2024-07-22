@@ -43,5 +43,5 @@ do(
 )
 done
 
-Rscript ~/repo/fungi_ITS2_dada2_protocol_07162024/sequence_processing_and_dada2/2_post_cutadapt_primer_check.r $workDir
+Rscript ~/repo/fungi_ITS2_dada2_protocol_07162024/sequence_processing_and_dada2/2_post_cutadapt_primer_check_qual_filter.r $workDir
 #this is a good place to stop to check primer orientation and quality profiles

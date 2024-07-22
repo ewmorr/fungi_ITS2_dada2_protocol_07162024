@@ -15,7 +15,7 @@ cd $workDir
 mkdir itsxpress_out
 outdir=itsxpress_out
 
-for i in cutadapt/*R1*
+for i in qual_filter/*R1*
 do(
 
     dir=${i%/*}

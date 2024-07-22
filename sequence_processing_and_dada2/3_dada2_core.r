@@ -24,38 +24,12 @@ checksDir = file.path(workdir, "dada2_processing_tables_figs")
 itsFs <- sort(list.files(seqDir, pattern = "_R1_001.fastq.gz", full.names = TRUE))
 itsRs <- sort(list.files(seqDir, pattern = "_R2_001.fastq.gz", full.names = TRUE))
 
-#itsxpress outputs 0 len reads. filter for len as well as normal filters
-#make files
-path.len <- file.path(seqDir, "gt_10")
-if(!dir.exists(path.len)) dir.create(path.len)
-itsFs.len <- file.path(path.len, basename(itsFs))
-itsRs.len <- file.path(path.len, basename(itsRs))
-
-#filter
-out2 <- filterAndTrim(itsFs, itsFs.len, itsRs, itsRs.len, maxN = 0, maxEE = c(2, 2),
-truncQ = 2, minLen = 10, rm.phix = TRUE, compress = TRUE, multithread = TRUE)  # on windows, set multithread = FALSE
-head(out2)
-
-# sort filtered read files
-itsFs.len <- sort(list.files(path.len, pattern = "_R1_001.fastq.gz", full.names = TRUE))
-itsRs.len <- sort(list.files(path.len, pattern = "_R2_001.fastq.gz", full.names = TRUE))
-
-
-#Vis read quality of its-extracted reads
-#If running on a large sample set should index the filename object to [1:25] otherwise will be unreadable
-n_seqs = ifelse(length(itsFs.len) >= 25, 25, length(itsFs.len) )
-
-pdf(file.path(checksDir, "read_quality_post_qual_filter.pdf"))
-print(plotQualityProfile(itsFs.len[1:n_seqs]))
-print(plotQualityProfile(itsRs.len[1:n_seqs]))
-dev.off()
-
 #This is the start of the core algorithm pipeline
 #At this point the tutorial at https://benjjneb.github.io/dada2/tutorial.html is likely more informative than the ITS specific tutorial
 
 #Learn the error rates
-errF <- learnErrors(itsFs.len, multithread = TRUE)
-errR <- learnErrors(itsRs.len, multithread = TRUE)
+errF <- learnErrors(itsFs, multithread = TRUE)
+errR <- learnErrors(itsRs, multithread = TRUE)
 
 #Viz
 pdf(file.path(checksDir, "error_rate_graphs.pdf"))
@@ -65,11 +39,11 @@ dev.off()
 
 #derep
 #it seems like the derep step is not strictly necessary and is wrapped in the dada2 alg. (it's no longer a separate step in the main tutorial)
-derepFs <- derepFastq(itsFs.len, verbose = TRUE)
-derepRs <- derepFastq(itsRs.len, verbose = TRUE)
+derepFs <- derepFastq(itsFs, verbose = TRUE)
+derepRs <- derepFastq(itsRs, verbose = TRUE)
 
 get.sample.name <- function(fname) strsplit(basename(fname), "_L00")[[1]][1]
-sample.names <- unname(sapply(itsFs.len, get.sample.name))
+sample.names <- unname(sapply(itsFs, get.sample.name))
 
 names(derepFs) <- sample.names
 names(derepRs) <- sample.names
@@ -95,18 +69,6 @@ saveRDS(seqtab.nochim, file = file.path(outDir, "dada2_seq_table_no_chim.rds"))
 table(nchar(getSequences(seqtab.nochim)))
 write.csv(table(nchar(getSequences(seqtab.nochim))), file.path(outDir, "asv_lens.csv"))
 
-###
-#Track reads through the pipeline
-
-#getN <- function(x) sum(getUniques(x))
-#track <- cbind(sapply(itsFs, getN), sapply(itsRs, getN), sapply(itsFs.len, getN), sapply(itsRs.len, getN), sapply(mergers, getN),
-#    rowSums(seqtab.nochim))
-# If processing a single sample, remove the sapply calls: e.g. replace
-# sapply(dadaFs, getN) with getN(dadaFs)
-#colnames(track) <- c("itsxpressF","itsxpressR", "filteredF", "filterR", "denoisedF", "denoisedR", "merged", "nonchim")
-#rownames(track) <- sample.names
-#write.csv(track, file.path(checksDir, "pre_primerTrim_primer_check.csv"))
-
 ################################
 #Create workable objects (on hd)
 
@@ -126,3 +88,38 @@ asv_tab <- t(seqtab.nochim)
 row.names(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, file.path(outDir, "ASVs_counts.tsv"), sep="\t", quote=F, col.names=NA)
 
+###
+#Track reads through the pipeline
+#library(dplyr)
+
+out.filtN = saveRDS(file = file.path(checksDir, "filtN_read_counts.rds"))
+out.qual = saveRDS(file = file.path(checksDir, "qual_read_counts.rds"))
+
+colnames(out.filtN) = c ("input", "N_filtered")
+colnames(out.qual) = c ("N_filtered", "qual_filtered")
+
+getN <- function(x) sum(getUniques(x))
+
+track = dplyur::full_join(
+    data.frame(out.filtN, sample = rownames(out.filtN)),
+    data.frame(out.qual %>% select(qual_filtered), sample = rownames(out.qual)), 
+    by = "sample"
+) %>%
+full_join(., 
+    data.frame(denoisedF = sapply(dadaFs, getN), sample = rownames(data.frame(sapply(dadaFs, getN)))), 
+    by = "sample"
+) %>%
+full_join(., 
+    data.frame(denoisedR = sapply(dadaRs, getN), sample = rownames(data.frame(sapply(dadaRs, getN)))),
+    by = "sample"
+) %>%
+full_join(., 
+    data.frame(merged = sapply(mergers, getN), sample = rownames(data.frame(sapply(mergers, getN)))),
+    by = "sample"
+) %>%
+full_join(., 
+    data.frame(nonchim = rowSums(seqtab.nochim), sample = rownames(data.frame(rowSums(seqtab.nochim)))),
+    by = "sample"
+)
+
+write.csv(track, file.path(checksDir, "read_processing_tracking.csv"))

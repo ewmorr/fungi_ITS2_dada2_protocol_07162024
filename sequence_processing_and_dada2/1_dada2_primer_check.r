@@ -40,6 +40,11 @@ fnFs.filtN <- file.path(seqDir, basename(fnFs)) # Put N-filterd files in filtN/ 
 fnRs.filtN <- file.path(seqDir, basename(fnRs))
 out.filtN = filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
 
+#save intermedaite for read tracking
+outDir = file.path(workDir, "dada2_processing_tables_figs")
+if(!dir.exists(outDir)) dir.create(outDir)
+saveRDS(out.filtN, file = file.path(outDir, "filtN_read_counts.rds"))
+
 #list.files(seqDir)
 #Reset the filename lists in case files are lost at trimming
 #parse and sort file names, adjust regex as needed
@@ -53,8 +58,6 @@ primerHits <- function(primer, fn) {
     return(sum(nhits > 0))
 }
 
-outDir = file.path(workDir, "dada2_processing_tables_figs")
-if(!dir.exists(outDir)) dir.create(outDir)
 
 x = rbind(FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = fnFs.filtN[[1]]),
 FWD.ReverseReads = sapply(FWD.orients, primerHits, fn = fnRs.filtN[[1]]),
