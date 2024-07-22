@@ -59,7 +59,7 @@ dev.off()
 ########################
 #Quality filter
 
-path.qual <- file.path(seqDir, "qual_filter")
+path.qual <- file.path(workDir, "qual_filter")
 if(!dir.exists(path.qual)) dir.create(path.qual)
 fnFs.qual <- file.path(path.qual, basename(fnFs.cut))
 fnRs.qual <- file.path(path.qual, basename(fnRs.cut))
