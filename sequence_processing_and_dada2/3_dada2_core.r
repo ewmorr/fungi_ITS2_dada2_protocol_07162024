@@ -122,4 +122,4 @@ full_join(.,
     by = "sample"
 )
 
-write.csv(track, file.path(checksDir, "read_processing_tracking.csv"))
+write.csv(track, file.path(checksDir, "read_processing_tracking.csv"), row.names = F, quote = F)
