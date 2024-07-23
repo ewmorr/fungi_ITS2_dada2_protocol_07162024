@@ -95,30 +95,30 @@ library(dplyr)
 out.filtN = readRDS(file = file.path(checksDir, "filtN_read_counts.rds"))
 out.qual = readRDS(file = file.path(checksDir, "qual_read_counts.rds"))
 
-colnames(out.filtN) = c ("input", "N_filtered")
-colnames(out.qual) = c ("N_filtered", "qual_filtered")
+colnames(out.filtN) = c ("total", "N_filtered")
+colnames(out.qual) = c ("cutadapt", "qual_filtered")
 
 getN <- function(x) sum(getUniques(x))
 
 track = full_join(
-    data.frame(out.filtN, sample = get.sample.name(rownames(out.filtN))),
-    data.frame(qual_filtered = out.qual[,2], sample = get.sample.name(rownames(out.qual))),
+    data.frame(sample = sapply(rownames(out.filtN), get.sample.name), out.filtN),
+    data.frame(sample = sapply(rownames(out.qual), get.sample.name), out.qual),
     by = "sample"
 ) %>%
 full_join(., 
-    data.frame(denoisedF = sapply(dadaFs, getN), sample = rownames(data.frame(sapply(dadaFs, getN)))), 
+    data.frame(denoisedF = sapply(dadaFs, getN), sample = names(sapply(dadaFs, getN)) ),
     by = "sample"
 ) %>%
 full_join(., 
-    data.frame(denoisedR = sapply(dadaRs, getN), sample = rownames(data.frame(sapply(dadaRs, getN)))),
+    data.frame(denoisedR = sapply(dadaRs, getN), sample = names(sapply(dadaRs, getN)) ),
     by = "sample"
 ) %>%
 full_join(., 
-    data.frame(merged = sapply(mergers, getN), sample = rownames(data.frame(sapply(mergers, getN)))),
+    data.frame(merged = sapply(mergers, getN), sample = names(sapply(mergers, getN)) ),
     by = "sample"
 ) %>%
 full_join(., 
-    data.frame(nonchim = rowSums(seqtab.nochim), sample = rownames(data.frame(rowSums(seqtab.nochim)))),
+    data.frame(nonchim = rowSums(seqtab.nochim), sample =  rownames(seqtab.nochim) ),
     by = "sample"
 )
 
