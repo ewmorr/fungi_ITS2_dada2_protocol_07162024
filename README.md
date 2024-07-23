@@ -27,7 +27,7 @@ Once R is open you can run R commands as normal
 library(dada2) #load dada2 
 q(save="no") #exit R without saving
 ```
-Once you have the environment set up you can run dada2 via slurm by setting up a slurm script to first activate the dada2 conda environment and then calling an R script (just your normal R script like the one I sent before) using `Rscript` command. 
+Once you have the environment set up you can run dada2 via slurm by setting up a slurm script to first activate the dada2 conda environment and then calling an R script using `Rscript` command. 
 
 ### Finally...
 Also clone this git repo to your local directory
