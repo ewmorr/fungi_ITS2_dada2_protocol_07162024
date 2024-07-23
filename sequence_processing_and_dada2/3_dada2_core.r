@@ -101,8 +101,8 @@ colnames(out.qual) = c ("N_filtered", "qual_filtered")
 getN <- function(x) sum(getUniques(x))
 
 track = full_join(
-    data.frame(out.filtN, sample = rownames(out.filtN)),
-    data.frame(qual_filtered = out.qual["qual_filtered"], sample = rownames(out.qual)),
+    data.frame(out.filtN, sample = get.sample.name(rownames(out.filtN))),
+    data.frame(qual_filtered = out.qual[,2], sample = get.sample.name(rownames(out.qual))),
     by = "sample"
 ) %>%
 full_join(., 
