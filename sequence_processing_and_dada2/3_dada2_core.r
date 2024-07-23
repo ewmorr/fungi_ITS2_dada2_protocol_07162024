@@ -102,7 +102,7 @@ getN <- function(x) sum(getUniques(x))
 
 track = full_join(
     data.frame(out.filtN, sample = rownames(out.filtN)),
-    data.frame(out.qual %>% select(qual_filtered), sample = rownames(out.qual)), 
+    data.frame(out.qual %>% dplyr::select(qual_filtered), sample = rownames(out.qual)), 
     by = "sample"
 ) %>%
 full_join(., 
