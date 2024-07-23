@@ -90,7 +90,7 @@ write.table(asv_tab, file.path(outDir, "ASVs_counts.tsv"), sep="\t", quote=F, co
 
 ###
 #Track reads through the pipeline
-#library(dplyr)
+library(dplyr)
 
 out.filtN = readRDS(file = file.path(checksDir, "filtN_read_counts.rds"))
 out.qual = readRDS(file = file.path(checksDir, "qual_read_counts.rds"))
@@ -100,7 +100,7 @@ colnames(out.qual) = c ("N_filtered", "qual_filtered")
 
 getN <- function(x) sum(getUniques(x))
 
-track = dplyur::full_join(
+track = full_join(
     data.frame(out.filtN, sample = rownames(out.filtN)),
     data.frame(out.qual %>% select(qual_filtered), sample = rownames(out.qual)), 
     by = "sample"
