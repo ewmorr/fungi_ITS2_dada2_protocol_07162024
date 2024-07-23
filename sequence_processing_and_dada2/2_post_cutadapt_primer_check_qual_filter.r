@@ -51,7 +51,7 @@ head(sample.names)
 n_seqs = ifelse(length(fnRs.cut) >= 25, 25, length(fnRs.cut) )
 
 #Vis read quality
-pdf(file.path(checksDir, "read_quality_pre_dada2_qual_filtering.pdf"))
+pdf(file.path(checksDir, "read_quality.post_cutadapt.pre_qual_filtering.pdf"))
 print(plotQualityProfile(fnFs.cut[1:n_seqs]) )
 print(plotQualityProfile(fnRs.cut[1:n_seqs]) )
 dev.off()
