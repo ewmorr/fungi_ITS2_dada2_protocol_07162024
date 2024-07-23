@@ -68,6 +68,7 @@ less dada2_workflow.itsxpress.out
 ```
 sbatch ~/repo/fungi_ITS2_dada2_protocol_07162024/premise/3_dada2_workflow.dada2.slurm test_run
 ```
+Check `dada2_processing_tables_figs/read_processing_tracking.csv` for a breakdown of the number of reads remaining after each prcessing step.
 
 ### Step 4. Taxonopmic classification
 ```
