@@ -24,12 +24,24 @@ checksDir = file.path(workdir, "dada2_processing_tables_figs")
 itsFs <- sort(list.files(seqDir, pattern = "_R1_001.fastq.gz", full.names = TRUE))
 itsRs <- sort(list.files(seqDir, pattern = "_R2_001.fastq.gz", full.names = TRUE))
 
+#looks like itsxpress still outputs very short sequences (dada2 throws error "Error: Input sequences must all be longer than the kmer-size (5)." at merging step. So we will add a secondary length filter
+path.len = file.path(workDir, "len_filter")
+if(!dir.exists(path.len)) dir.create(path.len)
+fnFs.len <- file.path(path.len, basename(itsFs))
+fnRs.len <- file.path(path.len, basename(itsRs))
+
+out.len = filterAndTrim(itsFs, fnFs.len, itsRs, fnRs.len,
+minLen = 10, compress = TRUE, multithread = TRUE)
+
+fnFs.len <- sort(list.files(path.len, pattern = "_R1_001.fastq.gz", full.names = TRUE))
+fnRs.len <- sort(list.files(path.len, pattern = "_R2_001.fastq.gz", full.names = TRUE))
+
 #This is the start of the core algorithm pipeline
 #At this point the tutorial at https://benjjneb.github.io/dada2/tutorial.html is likely more informative than the ITS specific tutorial
 
 #Learn the error rates
-errF <- learnErrors(itsFs, multithread = TRUE)
-errR <- learnErrors(itsRs, multithread = TRUE)
+errF <- learnErrors(fnFs.len, multithread = TRUE)
+errR <- learnErrors(fnRs.len, multithread = TRUE)
 
 #Viz
 pdf(file.path(checksDir, "error_rate_graphs.pdf"))
@@ -97,6 +109,8 @@ out.qual = readRDS(file = file.path(checksDir, "qual_read_counts.rds"))
 
 colnames(out.filtN) = c ("total", "N_filtered")
 colnames(out.qual) = c ("cutadapt", "qual_filtered")
+colnames(out.len) = c ("itsxpress", "ge_10_len")
+
 
 getN <- function(x) sum(getUniques(x))
 
@@ -105,7 +119,11 @@ track = full_join(
     data.frame(sample = sapply(rownames(out.qual), get.sample.name), out.qual),
     by = "sample"
 ) %>%
-full_join(., 
+full_join(.,
+    data.frame(sample = sapply(rownames(out.len), get.sample.name), out.len),
+    by = "sample"
+)
+full_join(.,
     data.frame(denoisedF = sapply(dadaFs, getN), sample = names(sapply(dadaFs, getN)) ),
     by = "sample"
 ) %>%
