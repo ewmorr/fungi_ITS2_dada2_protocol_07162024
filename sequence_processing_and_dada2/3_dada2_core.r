@@ -51,11 +51,11 @@ dev.off()
 
 #derep
 #it seems like the derep step is not strictly necessary and is wrapped in the dada2 alg. (it's no longer a separate step in the main tutorial)
-derepFs <- derepFastq(itsFs, verbose = TRUE)
-derepRs <- derepFastq(itsRs, verbose = TRUE)
+derepFs <- derepFastq(fnFs.len, verbose = TRUE)
+derepRs <- derepFastq(fnRs.len, verbose = TRUE)
 
 get.sample.name <- function(fname) strsplit(basename(fname), "_L00")[[1]][1]
-sample.names <- unname(sapply(itsFs, get.sample.name))
+sample.names <- unname(sapply(fnFs.len, get.sample.name))
 
 names(derepFs) <- sample.names
 names(derepRs) <- sample.names
