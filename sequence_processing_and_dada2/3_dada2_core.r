@@ -122,7 +122,7 @@ track = full_join(
 full_join(.,
     data.frame(sample = sapply(rownames(out.len), get.sample.name), out.len),
     by = "sample"
-)
+) %>%
 full_join(.,
     data.frame(denoisedF = sapply(dadaFs, getN), sample = names(sapply(dadaFs, getN)) ),
     by = "sample"
