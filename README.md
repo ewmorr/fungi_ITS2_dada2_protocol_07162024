@@ -45,6 +45,17 @@ cd test_run
 mkdir reads
 cp path_to/seqs/*fastq.gz ./reads
 ```
+You can check the number of reads per sample.
+```
+for i in reads/*R1*fastq*
+do(
+    r1File=${i##*/}
+    sample=${r1File%_L001_R1*}
+    numReads=$(echo $(zcat $i | wc -l) / 4 | bc)
+    echo -e "$sample\t$numReads" >> reads_per_sample.txt
+)
+done
+```
 
 ### Step 1. check primer/adapter orientation, remove adapters, and check quality
 Run the first script. You pass the script to sbatch, and pass the name of your parent directory or "working directory" to the script as an argument
