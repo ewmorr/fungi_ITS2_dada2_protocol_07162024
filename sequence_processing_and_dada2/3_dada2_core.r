@@ -25,7 +25,7 @@ itsFs <- sort(list.files(seqDir, pattern = "_R1_001.fastq.gz", full.names = TRUE
 itsRs <- sort(list.files(seqDir, pattern = "_R2_001.fastq.gz", full.names = TRUE))
 
 #looks like itsxpress still outputs very short sequences (dada2 throws error "Error: Input sequences must all be longer than the kmer-size (5)." at merging step. So we will add a secondary length filter
-path.len = file.path(workDir, "len_filter")
+path.len = file.path(workdir, "len_filter")
 if(!dir.exists(path.len)) dir.create(path.len)
 fnFs.len <- file.path(path.len, basename(itsFs))
 fnRs.len <- file.path(path.len, basename(itsRs))
