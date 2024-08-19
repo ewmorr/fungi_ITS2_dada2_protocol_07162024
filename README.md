@@ -1,4 +1,4 @@
-# Workflow for processing ITS2 reads through dada2 on the permise server using dada2 and ITSxpress
+# Workflow for processing ITS2 reads to ASVs on the permise server using dada2 and ITSxpress
 
 ## software setup
 If conda environments are not already installed on the user premise account install them as follows
@@ -50,7 +50,7 @@ You can check the number of reads per sample.
 for i in reads/*R1*fastq*
 do(
     r1File=${i##*/}
-    sample=${r1File%_L001_R1*}
+    sample=${r1File%_S*} #you can change this to pick out a different part of the file
     numReads=$(echo $(zcat $i | wc -l) / 4 | bc)
     echo -e "$sample\t$numReads" >> reads_per_sample.txt
 )
