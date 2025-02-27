@@ -23,10 +23,12 @@ do(
     pre=${r1File%R1*}
     post=${r1File##*R1}
     r2File=${pre}R2${post}
-
-    itsxpress --fastq $dir/$r1File --fastq2 $dir/$r2File \
-        --reversed_primers --threads 24 --cluster_id 1 --taxa Fungi --region ITS2 \
-        --outfile $outdir/$r1File --outfile2 $outdir/$r2File
+    
+    if [ ! -f $outdir/$r2File ]; then
+        itsxpress --fastq $dir/$r1File --fastq2 $dir/$r2File \
+            --reversed_primers --threads 24 --cluster_id 1 --taxa Fungi --region ITS2 \
+            --outfile $outdir/$r1File --outfile2 $outdir/$r2File
+    fi
 )
 done
 
