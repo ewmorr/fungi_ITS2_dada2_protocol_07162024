@@ -1,4 +1,4 @@
-# Workflow for processing ITS2 reads to ASVs on the permise server using dada2 and ITSxpress
+# Workflow for processing ITS2 reads to ASVs on the Premise server using dada2 and ITSxpress
 ### See https://benjjneb.github.io/dada2/ITS_workflow.html and https://benjjneb.github.io/dada2/tutorial.html for explanations of the ASV calling process and R code 
 ## software setup
 If conda environments are not already installed on the user premise account install them as follows
